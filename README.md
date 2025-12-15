@@ -1,1 +1,1 @@
-Запуск проекта mpm run dev
+Запуск проекта npm run dev
