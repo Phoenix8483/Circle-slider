@@ -1,0 +1,621 @@
+html {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+}
+
+:root {
+  --colorBackground: hsl(0, 0%, 85%);
+  --colorLine: hsl(219, 30%, 37%, 0.1);
+  --colorLineCircle: hsl(219, 30%, 37%, 0.2);
+  --colorBlue: hsl(219, 84%, 58%);
+  --colorTextSlider: hsl(219, 30%, 37%);
+  --colorYearBlue: hsl(239, 82%, 65%);
+  --colorYearRed: hsl(329, 82%, 65%);
+  --colorYearBorder: hsl(0, 0%, 0%);
+  --colorBackgroundCirclePoint: hsl(228, 29%, 97%);
+  --colorCirclePointBorder: hsla(219, 29%, 27%, 0.5);
+  --colorLineForMobile: hsl(220, 19%, 82%);
+  --colorPointMobile: hsla(219, 30%, 37%, 0.4);
+
+  --mainWrapperWidth: 83.5rem;
+  --mainContainerHeight: 80vh;
+  --circleWidthHeight: 31.25rem;
+  --swiperWidth: 62.5rem;
+  --buttonsCircleNavigationWidth: 7.5rem;
+  --titleNameWidth: 22.06rem; 
+  --yearWidth: 60.81rem;
+}
+
+@font-face {
+    font-family: 'Bebas Neue';
+    src: url('./fonts/BebasNeue-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'PT Sans';
+    src: url('./fonts/PTSans-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'PT SansBold';
+    src: url('./fonts/PTSans-Bold.woff2') format('woff2');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+.wrapper {
+  position: fixed;
+  z-index: 700;
+  inset: 0;
+  background-color: var(--colorBackground);
+}
+
+.historyDates {
+  display: flex;
+  flex-direction: column;
+  width: var(--mainWrapperWidth);
+  height: 100vh;
+  margin-inline: auto;
+  border: 2px solid var(--colorLine);
+  position: relative;
+}
+
+.titleName {
+  position: absolute;
+  left: 7%;
+  top: 5%;
+  width: var(--titleNameWidth);
+  height: 8.375rem;
+  color: var(--colorTextSlider);
+  font-family: 'PT SansBold';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 3.5rem;
+  line-height: 120%;
+}
+
+.wrapperCircle {
+  width: var(--circleWidthHeight);
+  height: var(--circleWidthHeight);
+  position: absolute;
+  inset: 0;
+  top: calc((var(--mainContainerHeight) - var(--circleWidthHeight)) / 2);
+  margin-inline: auto;
+  z-index: 400; 
+  rotate: -60deg;  /*"Активный" поинт будет всегда в правом верхнем углу независимо от количества */
+}
+
+.circle {
+  margin-inline: auto;
+  width: var(--circleWidthHeight);
+  height: var(--circleWidthHeight);
+  border: 1px solid var(--colorLineCircle);
+  border-radius: 50%;
+  transition: all 0.4s linear 0s;
+  position: relative;
+  inset: 0;
+}
+
+.circleElement {  /* Контейнер для поинтов и названий (mockData.name), чтобы лучше позиционировать элементы*/
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  width: 2px;
+  height: 1.25rem;
+  margin-inline: auto;
+  offset-path: circle();
+}
+
+.circleElementPoint {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  margin: auto;
+  transition: all 0.3s linear 0s;
+  background-color: var(--colorTextSlider);
+  color: var(--colorTextSlider);
+  border-radius: 50%;
+  offset-path: circle();
+  cursor: pointer;
+}
+
+.circleElementPointText {
+  margin: auto;
+  position: absolute;
+  inset: 0;
+  top: 20%;
+  font-family: 'PT Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.25rem;
+  line-height: 1.875rem;
+  text-align: center;
+}
+
+.showElement {
+  display: block;
+  transition: all 0.1s linear 0s;
+}
+
+.hideElement {
+  display: none;
+  transition: all 0.1s linear 0s;
+}
+
+.circleElementPoint-isActive {
+  width: 3.5rem;
+  height: 3.5rem;
+  background-color: var(--colorBackgroundCirclePoint);
+  border: 1px solid var(--colorCirclePointBorder); 
+  transition: all 0.2s linear 0s;
+}
+
+.circleElementPoint:hover {
+  .circleElementPointText {
+    display: block;
+  };
+  width: 3.5rem;
+  height: 3.5rem;
+  background-color: var(--colorBackgroundCirclePoint);
+  border: 1px solid var(--colorCirclePointBorder); 
+  transition: all 0.2s linear 0s;
+}
+
+.circleElementName {
+  position: absolute;
+  width: 53px;
+  height: 30px;
+  font-family: 'PT SansBold';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 1.25rem;
+  line-height: 30px;
+  color: var(--colorTextSlider);
+  left: 40px;
+  transition: all 0.1s linear 0s;
+}
+
+.yearSnap {
+  position: absolute;
+  margin-inline: auto;
+  width: 59.5rem;
+  height: 16rem;
+  inset: 0;
+  top: 20%;
+  z-index: 100;
+  display:flex;
+  gap: 2.5rem;
+  align-items:center;
+  justify-content: space-between;
+  font-family: 'PT SansBold';
+  font-size: 12.5rem;
+  font-weight: 700;
+  line-height: 10rem;
+  letter-spacing: -0.02em;
+  text-align: center;
+  -webkit-text-stroke: 1px var(--colorYearBorder);
+}
+
+.box {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  width: 28.125rem;
+  height: 16rem;
+}
+
+.box1 {
+  color: var(--colorYearBlue);
+} 
+
+.box2 {
+  color: var(--colorYearRed);
+}
+
+.mainContainer {
+  position: relative;
+  height: var(--mainContainerHeight);
+}
+
+.verticalLine {
+  position: absolute;
+  width: 0;
+  inset: 0;
+  margin-inline: auto;
+  border: 1px solid var(--colorLine);
+  z-index: 200;
+}
+
+.horizontalLine {
+  position: absolute;
+  height: 0px;
+  inset: 0;
+  border: 1px solid var(--colorLine);
+  top: 50%;
+}
+
+.horizontalCheckLine {
+  position: absolute;
+  width: 1002px;
+  height: 2px;
+  inset: 0;
+  top: 30%;
+  z-index: 900;
+}
+
+.buttonsCircleNavigation {
+  position: absolute;
+  left: 7%;
+  bottom: 25%;
+  width: var(--buttonsCircleNavigationWidth);
+  height: 5.5rem;
+  column-gap: 15px;
+  row-gap: 5px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: end;
+}
+
+.numberSlidesCircle {
+  display: flex;
+  font-family: 'PT Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+  color: var(--colorTextSlider);
+  width: var(--buttonsCircleNavigationWidth);
+  height: 1.875rem;
+  
+}
+
+.prevButtonCircle,
+.nextButtonCircle {
+  display: flex;   
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 3.125rem;
+  height: 3.125rem;
+  border-radius: 50%;
+  background: var(--colorBackground);
+  cursor: pointer;
+}
+
+.nextButtonCircle {
+  transform: rotate(180deg);
+}
+
+.sliderContainer {
+  display: flex;
+  column-gap: 1.25rem;
+  justify-content: space-evenly;
+  align-items: center;
+  inset: 0;
+  bottom: 0;
+  height: 20vh;
+}
+
+.swiper {
+  display: flex;
+  width: var(--swiperWidth); 
+  margin-inline: auto;
+}
+
+.swiper-slide {
+  width: 20rem;
+  height: 8.4375rem;
+  background-color: var(--colorBackground);
+  text-align: left;
+  font-size: 1.125rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sliderElementYear {
+  width: 41px;
+  height: 30px;
+  font-family: 'Bebas Neue';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.5rem;
+  line-height: 120%;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--colorBlue);
+}
+
+.sliderElementDescription {
+  font-family: 'PT Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.25rem;
+  line-height: 30px;
+  letter-spacing: 0;
+  color: var(--colorTextSlider);
+
+}
+
+.prevButton,
+.nextButton {
+  display: flex;   
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: 0px 0px 15px rgba(56, 119, 238, 0.1);
+  cursor: pointer;
+
+  &.swiper-button-disabled {
+    opacity: 0.35;
+    cursor: auto;
+    pointer-events: none;
+  }
+
+  &.swiper-button-hidden {
+    opacity: 0;
+    cursor: auto;
+    pointer-events: none;
+  }
+
+  .swiper-navigation-disabled & {
+    display: none !important;
+  }
+}
+
+.prevButton {
+  transform: rotate(180deg);
+}
+
+@media (max-width: 1400px) {
+
+  html {
+    font-size: 14px;
+  }
+}
+
+  @media (max-width: 1300px) {
+
+  html {
+    font-size: 13px;
+  }
+}
+
+ @media (max-width: 1200px) {
+
+  html {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 1000px) { 
+
+.historyDates {
+  width: 320px;
+  height: 100vh;
+  border: none;
+}
+
+.titleName {
+  left: 20px;
+  top: 59px;
+  width: 123px;
+  height: 48px;
+  font-size: 20px;
+}
+
+.yearSnap {
+  display:flex;
+  position: absolute;
+  margin: 0;
+  width: 273px;
+  height: 73px;
+  top: 163px;
+  left: 20px;
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 72px;
+  letter-spacing: -0.02em;
+  -webkit-text-stroke: 0px;
+}
+
+.mainContainer {
+  display: none;
+}
+
+.mobileNamePoint {
+  position: absolute;
+  left: 20px;
+  top: 263px;
+  width: 150px;
+  color: var(--colorTextSlider);
+  font-family: 'PT SansBold';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 120%;
+
+}
+.horizontalLineForMobile {
+  position: absolute;
+  width: 280px;
+  height: 0px;
+  left: 20px;
+  top: 293px;
+  border: 1px solid var(--colorLineForMobile);
+}
+
+.sliderContainer {
+  position: relative;
+  display: flex;
+  column-gap: 1.25rem;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 772px;
+  height: 114px;
+  inset: 0;
+  left: 20px;
+  top: 313px;
+}
+
+.swiper {
+  display: flex;
+  width: 732px;
+  height: 114px;
+  margin-inline: auto;
+  
+}
+
+.swiper-slide {
+  min-width: 166px;
+  max-width: 255px;
+  height: 80px;
+  background-color: var(--colorBackground);
+  text-align: left;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sliderElementYear {
+  width: 26px;
+  height: 19px;
+  font-size: 16px;
+}
+
+.sliderElementDescription {
+  font-family: 'PT Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 145%;
+  letter-spacing: 0;
+  color: var(--colorTextSlider);
+
+}
+
+.prevButton,
+.nextButton {
+  display: none;
+}
+
+.wrapperCircle {
+  width: 86px;
+  height: 50px;
+  position: absolute;
+  inset: 0;
+  top: 530px;
+  margin-inline: auto;
+  z-index: 400; 
+  rotate: 0deg;
+  border: none;
+}
+
+.circle {
+  width: 6px;
+  height: 86px;
+  border: none;
+  border-radius: 1%;
+  rotate: 270deg;
+}
+
+.circleElement {  
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  width: 0px;
+  height: 1.25rem;
+  margin-inline: auto;
+  offset-path: none;
+  margin: 0;
+  padding-block: 1px;
+}
+
+.circleElementPoint {
+  background-color: var(--colorPointMobile);
+  color: var(--colorTextSlider);
+}
+
+.pointMobileActive {
+  background-color: var(--colorTextSlider);
+}
+
+.circleElementPointText {
+  display: none;
+}
+
+.showElement {
+  display: none;
+}
+
+.hideElement {
+  display: none;
+}
+
+.circleElementPoint-isActive {
+  display: none;
+}
+
+.circleElementPoint:hover {
+  .circleElementPointText {
+    display: none;
+  };
+  width: 6px;
+  height: 6px;
+  background-color: var(--colorTextSlider);
+  border: 1px solid var(--colorCirclePointBorder); 
+  transition: all 0.2s linear 0s;
+}
+
+.circleElementName {
+  display: none;
+}
+
+.buttonsCircleNavigation {
+  order: 1;
+  position: absolute;
+  left: 20px;
+  top: 530px;
+  width: 58.33px;
+  height: 49.67px;
+  column-gap: 5px;
+  row-gap: 10px;
+}
+
+.numberSlidesCircle {
+  width: 41px;
+  height: 14px;
+  display: flex;
+  font-family: 'PT Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+  color: var(--colorTextSlider);
+}
+
+.prevButtonCircle,
+.nextButtonCircle {
+  width: 25px;
+  height: 25px;
+}
+
+}
